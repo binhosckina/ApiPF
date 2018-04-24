@@ -3,11 +3,11 @@ var login = require('./login');
 
 module.exports = function(app) {
 
-    // app.use(login.isLoggedIn); // Função middleware para verificar se o perito está logado, é chamado para todas as funções abaixo
+    app.use(login.isLoggedIn); // Função middleware para verificar se o perito está logado, é chamado para todas as funções abaixo
 
-    // Lista todas as ocorrências (NO FUTURO, DEVE SER ALTERADA PRA LISTAR APENAS AS OCORRÊNCIAS DO USUÁRIO LOGADO)
+    // Lista todas as ocorrências
     app.get('/ocorrencia', function(req, res) {
-        Ocorrencia.find({}, // Foi passado um objeto vazio como filtro, pois queremos todas as ocorrências
+        Ocorrencia.find({ criadoPor: req.user._id }, // Foi passado um objeto vazio como filtro, pois queremos todas as ocorrências
             'numeroOcorrencia sedeOcorrencia peritoOcorrencia dataHoraAcionamento', // select implicito: campos que queremos filtrar
             function (err, ocorrencia) {
                 if (err) return err;
@@ -18,7 +18,7 @@ module.exports = function(app) {
 
     // Cria uma nova ocorrência
     app.post('/ocorrencia', function(req, res) {
-        Ocorrencia.create({}, // os campos que não forem passado receberão o valor padrão, definido no seu Model
+        Ocorrencia.create({ criadoPor: req.user._id }, // os campos que não forem passado receberão o valor padrão, definido no seu Model
             function (err, ocorrencia) {
                 if (err) return err;
             
@@ -26,10 +26,10 @@ module.exports = function(app) {
         });
     });
 
-    // Busca apenas uma única ocorrência, pelo seu idOcorrencia (NO FUTURO, DEVE SER ALTERADA PRA MOSTRAR APENAS SE A OCORRÊNCIA FOR DO USUÁRIO LOGADO)
+    // Busca apenas uma única ocorrência, pelo seu idOcorrencia e pelo id do perito logado
     app.get('/ocorrencia/:idOcorrencia', function(req, res) {
-        Ocorrencia.findById(req.params.idOcorrencia, // idOcorrencia que foi passado na URL
-            'numeroOcorrencia sedeOcorrencia peritoOcorrencia dataHoraAcionamento', // select implicito: campos que queremos filtrar
+        Ocorrencia.findOne({ _id: req.params.idOcorrencia, criadoPor: req.user._id }, // idOcorrencia que foi passado na URL
+            'numeroOcorrencia sedeOcorrencia peritoOcorrencia dataHoraAcionamento', // select implícito: campos que queremos filtrar
             function (err, ocorrencia) {
                 if (err) return err;
             
@@ -39,7 +39,7 @@ module.exports = function(app) {
 
     // Salva as alterações, da tela de dados gerais, pelo seu idOcorrencia
     app.patch('/dados_gerais/:idOcorrencia', function(req, res) {
-        Ocorrencia.findByIdAndUpdate(req.params.idOcorrencia, // idOcorrencia que foi passado na URL
+        Ocorrencia.findOneAndUpdate({ _id: req.params.idOcorrencia, criadoPor: req.user._id }, // idOcorrencia que foi passado na URL
             {
                 numeroOcorrencia: req.body.numeroOcorrencia,      // campos que queremos atualizar,
                 sedeOcorrencia: req.body.sedeOcorrencia,          // como estamos utilizando o método HTTP PATCH

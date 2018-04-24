@@ -41,7 +41,7 @@ module.exports = function (passport) {
 
             // find a user whose email is the same as the forms email
             // we are checking to see if the user trying to login already exists
-            Perito.findOne({ 'perito.usuario': usuario }, function (err, perito) {
+            Perito.findOne({ 'usuario': usuario }, function (err, perito) {
                 // if there are any errors, return the error before anything else
                 if (err)
                     return done(err);
@@ -80,7 +80,7 @@ module.exports = function (passport) {
 
                 // find a user whose email is the same as the forms email
                 // we are checking to see if the user trying to login already exists
-                Perito.findOne({ 'perito.usuario': usuario }, function (err, perito) {
+                Perito.findOne({ 'usuario': usuario }, function (err, perito) {
                     // if there are any errors, return the error
                     if (err)
                         return done(err);
@@ -95,11 +95,11 @@ module.exports = function (passport) {
                         var newPerito = new Perito();
 
                         // set the user's local credentials
-                        newPerito.perito.usuario = usuario;
-                        newPerito.perito.senha = newPerito.generateHash(senha);
-                        newPerito.perito.nome = "";
-                        newPerito.perito.sede = "Porto Alegre";
-                        newPerito.perito.ativo = true;
+                        newPerito.usuario = usuario;
+                        newPerito.senha = newPerito.generateHash(senha);
+                        newPerito.nome = req.nome;
+                        newPerito.sede = req.sede;
+                        newPerito.ativo = req.ativo;
 
                         // save the user
                         newPerito.save(function (err) {

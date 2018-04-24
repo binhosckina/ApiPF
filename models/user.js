@@ -4,15 +4,11 @@ var bcrypt = require('bcrypt-nodejs');
 
 // define the schema for our user model
 var userSchema = mongoose.Schema({
-
-    perito: {
-        usuario: String,
-        senha: String,
-        nome: String,
-        sede: String,
-        ativo: Boolean
-    }
-
+    usuario: { type: String, required: true },
+    senha: { type: String, required: true },
+    nome: { type: String, default: '' },
+    sede: { type: String, default: '' },
+    ativo: { type: Boolean, default: true }
 });
 
 // metodos ======================
@@ -23,7 +19,7 @@ userSchema.methods.generateHash = function (senha) {
 
 // verifica se a senha esta correta
 userSchema.methods.validPassword = function (senha) {
-    return bcrypt.compareSync(senha, this.perito.senha);
+    return bcrypt.compareSync(senha, this.senha);
 };
 
 // cria o model para peritos e o expoe para o app

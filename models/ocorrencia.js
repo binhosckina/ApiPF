@@ -12,7 +12,7 @@ var User = require('./user');
 
 var OcorrenciaSchema = new Schema({
     
-    criadoPor: { type: Schema.ObjectId, ref: 'User' },
+    criadoPor: { type: Schema.ObjectId, ref: 'User', required: true },
 
     // TELA DADOS GERAIS
     numeroOcorrencia: { type: String, default: '' },
