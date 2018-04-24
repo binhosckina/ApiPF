@@ -3,11 +3,11 @@ var login = require('./login');
 
 module.exports = function(app) {
 
-    app.use(login.isLoggedIn); // Função middleware para verificar se o perito está logado, é chamado para todas as funções abaixo
+    app.use(login.isLoggedIn); // Função middleware para verificar se o perito está logado, é chamada para todas as funções abaixo
 
     // Lista todas as ocorrências
     app.get('/ocorrencia', function(req, res) {
-        Ocorrencia.find({ criadoPor: req.user._id }, // Foi passado um objeto vazio como filtro, pois queremos todas as ocorrências
+        Ocorrencia.find({ criadoPor: req.user._id }, // Foi passado o id do perito como filtro, pois queremos apenas as ocorrências dele
             'numeroOcorrencia sedeOcorrencia peritoOcorrencia dataHoraAcionamento', // select implicito: campos que queremos filtrar
             function (err, ocorrencia) {
                 if (err) return err;
@@ -21,7 +21,7 @@ module.exports = function(app) {
         Ocorrencia.create({ criadoPor: req.user._id }, // os campos que não forem passado receberão o valor padrão, definido no seu Model
             function (err, ocorrencia) {
                 if (err) return err;
-            
+
                 res.json(ocorrencia);
         });
     });
