@@ -2,23 +2,16 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 var Local = require('../models/local');
-var User = require('./user');
-
-// import { Sede } from './sede';
-// import { Local } from './local';
-// import { Estado } from './estado';
-// import { Municipio } from './municipio';
-// import { Vestigio } from './vestigio';
+var Perito = require('./user');
 
 var OcorrenciaSchema = new Schema({
     
-    criadoPor: { type: Schema.ObjectId, ref: 'User', required: true },
+    criadoPorId: { type: Schema.ObjectId, ref: 'Perito' },
 
     // TELA DADOS GERAIS
     numeroOcorrencia: { type: String, default: '' },
-    // sedeOcorrencia: { type: Schema.ObjectId, ref: 'Sede' },
-    sedeOcorrencia: { type: String, default: '' },    
-    peritoOcorrencia: [{ type: Schema.ObjectId, ref: 'Perito' }],
+    // sedeId: { type: Schema.ObjectId, ref: 'Sede', default: '' },    
+    peritosId: [{ type: Schema.ObjectId, ref: 'Perito' }],
     dataHoraAcionamento: { type: Date, default: Date.now },
 
     // // TELA ENDEREÇO
@@ -27,10 +20,6 @@ var OcorrenciaSchema = new Schema({
     // municipio: String,
     // logradouro: String,
     // complemento: String,
-
-    /*
-     * TODO - revisar modelagem deste ponto em diante!
-     */
 
     // TELA RESPONSÁVEL DO LOCAL
     nomeResponsavel: { type: String, default: '' },
