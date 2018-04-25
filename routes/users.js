@@ -18,10 +18,10 @@ module.exports = function (app, passport) {
     // we will use route middleware to verify this (the isLoggedIn function)
     app.get('/profile', isLoggedIn, function (req, res) {
       res.json({
-        "usuario": req.user.perito.usuario,
-        "nome": req.user.perito.nome,
-        "sede": req.user.perito.sede,
-        "ativo": req.user.perito.ativo
+        "usuario": req.user.usuario,
+        "nome": req.user.nome,
+        "sede": req.user.sede,
+        "ativo": req.user.ativo
       });
     });
 
