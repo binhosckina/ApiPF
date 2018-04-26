@@ -7,9 +7,9 @@ module.exports = function(app) {
 
     // Lista todas as ocorrências
     app.get('/ocorrencia', function(req, res) {
-        Ocorrencia.find({ criadoPorId: req.user._id }) // Foi passado o id do perito como filtro, pois queremos apenas as ocorrências dele
-            .select('numeroOcorrencia sede peritosId dataHoraAcionamento criadoPorId') // select implicito: campos que queremos filtrar
-            .populate('criadoPorId', 'nome sede usuario') // Retorna o Objeto dos campos referenciados para outros documentos (similar ao join)
+        Ocorrencia.find({ criadoPor: req.user._id }) // Foi passado o id do perito como filtro, pois queremos apenas as ocorrências dele
+            .select('numeroOcorrencia sede peritosAcionados dataHoraAcionamento criadoPor') // select implicito: campos que queremos filtrar
+            .populate('criadoPor', 'nome sede usuario') // Retorna o Objeto dos campos referenciados para outros documentos (similar ao join)
             .exec(function (err, ocorrencia) {
                 if (err) return err;
 
@@ -20,7 +20,7 @@ module.exports = function(app) {
 
     // Cria uma nova ocorrência
     app.post('/ocorrencia', function(req, res) {
-        Ocorrencia.create({ criadoPorId: req.user._id }, // os campos que não forem passado receberão o valor padrão, definido no seu Model
+        Ocorrencia.create({ criadoPor: req.user._id }, // os campos que não forem passado receberão o valor padrão, definido no seu Model
             function (err, ocorrencia) {
                 if (err) return err;
 
@@ -31,8 +31,8 @@ module.exports = function(app) {
 
     // Busca apenas uma única ocorrência, pelo seu idOcorrencia e pelo id do perito logado
     app.get('/ocorrencia/:idOcorrencia', function(req, res) {
-        Ocorrencia.findOne({ _id: req.params.idOcorrencia, criadoPorId: req.user._id }, // idOcorrencia que foi passado na URL
-            'numeroOcorrencia sedeOcorrencia peritoOcorrencia dataHoraAcionamento', // select implícito: campos que queremos filtrar
+        Ocorrencia.findOne({ _id: req.params.idOcorrencia, criadoPor: req.user._id }, // idOcorrencia que foi passado na URL
+            'numeroOcorrencia sede peritosAcionados dataHoraAcionamento', // select implícito: campos que queremos filtrar
             function (err, ocorrencia) {
                 if (err) return err;
             
@@ -42,15 +42,15 @@ module.exports = function(app) {
 
     // Salva as alterações, da tela de dados gerais, pelo seu idOcorrencia
     app.patch('/dados_gerais/:idOcorrencia', function(req, res) {
-        Ocorrencia.findOneAndUpdate({ _id: req.params.idOcorrencia, criadoPorId: req.user._id }, // idOcorrencia que foi passado na URL
+        Ocorrencia.findOneAndUpdate({ _id: req.params.idOcorrencia, criadoPor: req.user._id }, // idOcorrencia que foi passado na URL
             {
                 numeroOcorrencia: req.body.numeroOcorrencia,      // campos que queremos atualizar,
-                sedeOcorrencia: req.body.sedeOcorrencia,          // como estamos utilizando o método HTTP PATCH
-                peritoOcorrencia: req.body.peritoOcorrencia,      // os campos que não forem recebidos
+                sede: req.body.sede,          // como estamos utilizando o método HTTP PATCH
+                peritos: req.body.peritos,      // os campos que não forem recebidos
                 dataHoraAcionamento: req.body.dataHoraAcionamento // NÃO serão atualizados
             }, { 
                 new: true, // true para retornar o objeto atualizado
-                select: 'numeroOcorrencia sedeOcorrencia peritoOcorrencia dataHoraAcionamento' // campos que queremos filtrar
+                select: 'numeroOcorrencia sede peritosAcionados dataHoraAcionamento' // campos que queremos filtrar
             }, function (err, ocorrencia) {
                 if (err) res.status(500).json(err);
             
@@ -58,4 +58,22 @@ module.exports = function(app) {
             }
         );
     });
+
+    app.patch('endereco/:idOcorrencia', function(req, res) {
+        Ocorrencia.findOneAndUpdate({ _id: req.params.idOcorrencia, criadoPor: req.user._id },
+            {
+                tipoLocal: req.body.tipoLocal,
+                estado: req.body.estado,
+                municipio: req.body.municipio,
+                logradouro: req.body.logradouro,
+                complemento: req.body.complemento
+            }, {
+                new: true,
+                select: 'tipoLocal estado municipio logradouro complemento'
+            }, function (err, ocorrencia) {
+                if (err) res.status(500).json(err);
+
+                res.json(ocorrencia);
+            })
+    })
 };
