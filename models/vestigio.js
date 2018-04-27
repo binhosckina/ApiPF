@@ -12,5 +12,5 @@ var VestigioSchema = new Schema({
     tipo: { type: String, default: '' },
     informacoesAdicionais: { type: String, default: '' },
     geolocalizacao: { type: Boolean, default: false },
-    geoInfo: { type: Schema.ObjectId, ref: 'Ocorrencia', default: '' },
+    geoInfo: { type: Schema.ObjectId, ref: 'Ocorrencia', default: null },
 });

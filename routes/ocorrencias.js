@@ -8,7 +8,7 @@ module.exports = function(app) {
     // Lista todas as ocorrências
     app.get('/ocorrencia', function(req, res) {
         Ocorrencia.find({ criadoPor: req.user._id }) // Foi passado o id do perito como filtro, pois queremos apenas as ocorrências dele
-            .select('numeroOcorrencia sede peritosAcionados dataHoraAcionamento criadoPor') // select implicito: campos que queremos filtrar
+            // .select('numeroOcorrencia sede peritosAcionados dataHoraAcionamento tipoLocal estado municipio') // select: campos que queremos filtrar
             .populate('criadoPor', 'nome sede usuario') // Retorna o Objeto dos campos referenciados para outros documentos (similar ao join)
             .exec(function (err, ocorrencia) {
                 if (err) return err;
@@ -30,6 +30,7 @@ module.exports = function(app) {
     });
 
     // Busca apenas uma única ocorrência, pelo seu idOcorrencia e pelo id do perito logado
+    // param idOcorrencia: _id da Ocorrencia que queremos atualizar
     app.get('/ocorrencia/:idOcorrencia', function(req, res) {
         Ocorrencia.findOne({ _id: req.params.idOcorrencia, criadoPor: req.user._id }, // idOcorrencia que foi passado na URL
             'numeroOcorrencia sede peritosAcionados dataHoraAcionamento', // select implícito: campos que queremos filtrar
@@ -41,6 +42,7 @@ module.exports = function(app) {
     });
 
     // Salva as alterações, da tela de dados gerais, pelo seu idOcorrencia
+    // param idOcorrencia: _id da Ocorrencia que queremos atualizar
     app.patch('/dados_gerais/:idOcorrencia', function(req, res) {
         Ocorrencia.findOneAndUpdate({ _id: req.params.idOcorrencia, criadoPor: req.user._id }, // idOcorrencia que foi passado na URL
             {
@@ -59,7 +61,9 @@ module.exports = function(app) {
         );
     });
 
-    app.patch('endereco/:idOcorrencia', function(req, res) {
+    // Salva as alterações da tela de endereço
+    // param idOcorrencia: _id da Ocorrencia que queremos atualizar
+    app.patch('/endereco/:idOcorrencia', function(req, res) {
         Ocorrencia.findOneAndUpdate({ _id: req.params.idOcorrencia, criadoPor: req.user._id },
             {
                 tipoLocal: req.body.tipoLocal,
@@ -74,6 +78,7 @@ module.exports = function(app) {
                 if (err) res.status(500).json(err);
 
                 res.json(ocorrencia);
-            })
-    })
+            }
+        );
+    });
 };
