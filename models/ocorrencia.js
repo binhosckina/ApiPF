@@ -18,9 +18,9 @@ var OcorrenciaSchema = new Schema({
     dataHoraAcionamento: { type: Date, default: Date.now },
 
     // TELA ENDEREÇO
-    tipoLocal: { type: Schema.ObjectId, ref: 'TipoLocal', default: '' },
-    estado: { type: Schema.ObjectId, ref: 'Estado', default: '' },
-    municipio: { type: Schema.ObjectId, ref: 'Municipio', default: '' },
+    tipoLocal: { type: Schema.ObjectId, ref: 'TipoLocal', default: null },
+    estado: { type: Schema.ObjectId, ref: 'Estado', default: null },
+    municipio: { type: Schema.ObjectId, ref: 'Municipio', default: null },
     logradouro: { type: String, default: '' },
     complemento: { type: String, default: '' },
 
